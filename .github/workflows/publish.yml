@@ -6,12 +6,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-publish:
-    runs-on: ${{ matrix.os }}
+  build-linux:
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
@@ -26,30 +25,85 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install maturin
-      run: |
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-          pip install maturin[patchelf]
-        else
-          pip install maturin
-        fi
+      run: pip install maturin[patchelf]
 
-    - name: Build wheels
+    - name: Build manylinux wheels
       run: |
         cd bindings/python
-        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-          maturin build --release --out ../../dist --compatibility manylinux2014
-        else
-          maturin build --release --out ../../dist
-        fi
+        maturin build --release --out ../../dist --compatibility manylinux_2_17
 
     - name: Upload wheels
       uses: actions/upload-artifact@v4
       with:
-        name: wheels-${{ matrix.os }}-py${{ matrix.python-version }}
+        name: wheels-linux-py${{ matrix.python-version }}
+        path: dist/
+
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install maturin
+      run: pip install maturin
+
+    - name: Build wheels
+      run: |
+        cd bindings/python
+        maturin build --release --out ../../dist
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheels-windows-py${{ matrix.python-version }}
+        path: dist/
+
+  build-macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install maturin
+      run: pip install maturin
+
+    - name: Build wheels
+      run: |
+        cd bindings/python
+        maturin build --release --out ../../dist
+
+    - name: Upload wheels
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheels-macos-py${{ matrix.python-version }}
         path: dist/
 
   publish:
-    needs: build-and-publish
+    needs: [build-linux, build-windows, build-macos]
     runs-on: ubuntu-latest
     if: github.event_name == 'release' || github.event_name == 'workflow_dispatch'
     

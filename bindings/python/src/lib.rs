@@ -6,7 +6,7 @@ use pyo3::prelude::*;
 
 /// Python module for Wavemark audio watermarking
 #[pymodule]
-fn wavemark(_py: Python, m: &PyModule) -> PyResult<()> {
+fn wavemark(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(hello_world, m)?)?;
     Ok(())
 }
