@@ -13,8 +13,8 @@ name = "wavemark"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.21", features = ["extension-module", "abi3-py311"] }
-wavemark = { workspace = true }
+pyo3 = { version = "0.21", features = ["extension-module", "abi3-py38"] }
+wavemark = { path = "../../wavemark" }
 
 [build-dependencies]
 pyo3-build-config = "0.21"

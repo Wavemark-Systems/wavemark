@@ -1,8 +1,10 @@
 [workspace]
 members = [
     "wavemark",
-    "bindings/python",
     "bindings/typescript",
+]
+exclude = [
+    "bindings/python",
 ]
 resolver = "2"
 

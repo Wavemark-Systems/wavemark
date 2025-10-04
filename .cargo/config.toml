@@ -1,0 +1,9 @@
+# Workspace configuration for Wavemark
+# Exclude Python bindings from regular cargo builds since they need maturin
+
+[build]
+# Don't build Python bindings with regular cargo - use maturin instead
+target-dir = "target"
+
+# Python bindings need special handling and should be built with maturin
+# This prevents cargo build from trying to build them as regular libraries
