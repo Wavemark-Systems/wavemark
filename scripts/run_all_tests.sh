@@ -79,39 +79,37 @@ else
 fi
 echo ""
 
-# Step 4: Run tests for each individual crate
-print_status "Running individual crate tests..."
+# Step 4: Run tests for each component
+print_status "Running individual component tests..."
 
-crates=("encoder" "decoder" "fourier" "api")
-for crate in "${crates[@]}"; do
-    print_status "Testing wavemark-$crate..."
-    if cargo test -p "wavemark-$crate"; then
-        print_success "wavemark-$crate tests passed"
+components=("wavemark" "wavemark-python" "wavemark-typescript")
+for component in "${components[@]}"; do
+    print_status "Testing $component..."
+    if cargo test -p "$component"; then
+        print_success "$component tests passed"
     else
-        print_error "wavemark-$crate tests failed"
+        print_error "$component tests failed"
         exit 1
     fi
 done
 echo ""
 
-# Step 5: Run integration tests (if any exist in individual crates)
+# Step 5: Run integration tests for main library
 print_status "Running integration tests..."
-for crate in "${crates[@]}"; do
-    if [ -d "crates/$crate/tests" ]; then
-        print_status "Running integration tests for wavemark-$crate..."
-        if cargo test -p "wavemark-$crate" --test build_test; then
-            print_success "wavemark-$crate integration tests passed"
-        else
-            print_error "wavemark-$crate integration tests failed"
-            exit 1
-        fi
+if [ -d "wavemark/tests" ]; then
+    print_status "Running integration tests for wavemark library..."
+    if cargo test -p wavemark; then
+        print_success "wavemark integration tests passed"
+    else
+        print_error "wavemark integration tests failed"
+        exit 1
     fi
-done
+fi
 echo ""
 
 # Step 6: Check workspace structure
 print_status "Verifying workspace structure..."
-expected_dirs=("crates/encoder" "crates/decoder" "crates/fourier" "crates/api" "docs" "scripts")
+expected_dirs=("wavemark" "bindings/python" "bindings/typescript" "docs" "scripts")
 for dir in "${expected_dirs[@]}"; do
     if [ -d "$dir" ]; then
         print_success "Directory $dir exists"
@@ -122,13 +120,22 @@ for dir in "${expected_dirs[@]}"; do
 done
 echo ""
 
-# Step 7: Check that each crate has the expected structure
-print_status "Verifying crate structures..."
-for crate in "${crates[@]}"; do
-    if [ -f "crates/$crate/Cargo.toml" ] && [ -f "crates/$crate/src/lib.rs" ]; then
-        print_success "wavemark-$crate structure is valid"
+# Step 7: Check that main library has the expected structure
+print_status "Verifying library structure..."
+if [ -f "wavemark/Cargo.toml" ] && [ -f "wavemark/src/lib.rs" ]; then
+    print_success "wavemark library structure is valid"
+else
+    print_error "wavemark library structure is invalid"
+    exit 1
+fi
+
+# Check module directories
+modules=("encoder" "decoder" "fourier" "api")
+for module in "${modules[@]}"; do
+    if [ -d "wavemark/src/$module" ] && [ -f "wavemark/src/$module/mod.rs" ]; then
+        print_success "wavemark $module module structure is valid"
     else
-        print_error "wavemark-$crate structure is invalid"
+        print_error "wavemark $module module structure is invalid"
         exit 1
     fi
 done
@@ -137,11 +144,12 @@ echo ""
 # Final summary
 print_success "🎉 All tests completed successfully!"
 print_status "Workspace verification summary:"
-echo "  ✅ All crates build in debug mode"
-echo "  ✅ All crates build in release mode"
+echo "  ✅ All components build in debug mode"
+echo "  ✅ All components build in release mode"
 echo "  ✅ All unit tests pass"
 echo "  ✅ All integration tests pass"
 echo "  ✅ Workspace structure is valid"
-echo "  ✅ All crate structures are valid"
+echo "  ✅ Library structure is valid"
+echo "  ✅ All module structures are valid"
 echo ""
 print_success "The wavemark workspace is ready for development!"

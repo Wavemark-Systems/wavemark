@@ -16,18 +16,19 @@ cargo build --release
 # Run all tests
 cargo test
 
-# Run tests for a specific crate
-cargo test -p wavemark-api
+# Run tests for a specific component
+cargo test -p wavemark
+cargo test -p wavemark-python
+cargo test -p wavemark-typescript
 ```
 
 ## Expected Output
 
 ### Successful Build
 ```
-   Compiling wavemark-encoder v0.1.0 (/path/to/wavemark/crates/encoder)
-   Compiling wavemark-decoder v0.1.0 (/path/to/wavemark/crates/decoder)
-   Compiling wavemark-fourier v0.1.0 (/path/to/wavemark/crates/fourier)
-   Compiling wavemark-api v0.1.0 (/path/to/wavemark/crates/api)
+   Compiling wavemark v0.1.0 (/path/to/wavemark/wavemark)
+   Compiling wavemark-python v0.1.0 (/path/to/wavemark/bindings/python)
+   Compiling wavemark-typescript v0.1.0 (/path/to/wavemark/bindings/typescript)
     Finished `dev` profile [unoptimized + debuginfo] target(s) in X.XXs
 ```
 
@@ -53,21 +54,20 @@ wavemark/
 ├── docs/                   # Documentation
 │   ├── README.md           # Detailed documentation
 │   └── BUILD_VERIFICATION.md # This file
-├── tests/                  # Integration tests
-│   └── integration_test.rs # Workspace structure tests
-└── crates/                 # Individual library crates
-    ├── encoder/
-    │   ├── Cargo.toml
-    │   └── src/lib.rs
-    ├── decoder/
-    │   ├── Cargo.toml
-    │   └── src/lib.rs
-    ├── fourier/
-    │   ├── Cargo.toml
-    │   └── src/lib.rs
-    └── api/
-        ├── Cargo.toml
-        └── src/lib.rs
+├── scripts/                # Utility scripts
+├── bindings/               # Language bindings
+│   ├── python/             # Python bindings
+│   └── typescript/         # TypeScript bindings
+└── wavemark/               # Main library
+    ├── Cargo.toml          # Library configuration
+    ├── examples/           # Library examples
+    ├── tests/              # Library tests
+    └── src/                # Source code
+        ├── lib.rs          # Main entry point
+        ├── encoder/        # Encoder module
+        ├── decoder/        # Decoder module
+        ├── fourier/        # Fourier module
+        └── api/            # API module
 ```
 
 ## Troubleshooting

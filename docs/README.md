@@ -12,7 +12,8 @@ wavemark/
 ├── Cargo.lock              # Dependency lock file
 ├── LICENSE                  # License file
 ├── docs/                   # Documentation
-│   └── README.md           # This file
+│   ├── README.md           # This file
+│   └── BUILD_VERIFICATION.md # Build verification guide
 ├── scripts/                # Utility scripts
 │   ├── run_all_tests.sh    # Comprehensive test runner
 │   ├── quick_test.sh       # Quick test runner
@@ -28,59 +29,60 @@ wavemark/
 │       ├── tests/          # TypeScript tests
 │       ├── examples/       # TypeScript examples
 │       └── .cargo/         # Cargo configuration
-└── crates/                 # Individual library crates
-    ├── encoder/            # Audio encoding functionality
-    │   ├── Cargo.toml
-    │   ├── src/
-    │   │   └── lib.rs
-    │   └── tests/
-    │       └── build_test.rs
-    ├── decoder/            # Audio decoding functionality
-    │   ├── Cargo.toml
-    │   ├── src/
-    │   │   └── lib.rs
-    │   └── tests/
-    │       └── build_test.rs
-    ├── fourier/            # Fourier transform operations
-    │   ├── Cargo.toml
-    │   ├── src/
-    │   │   └── lib.rs
-    │   └── tests/
-    │       └── build_test.rs
-    └── api/                # Main public API
-        ├── Cargo.toml
-        ├── src/
-        │   └── lib.rs
-        └── tests/
-            └── build_test.rs
+└── wavemark/               # Main audio watermarking library
+    ├── Cargo.toml          # Library configuration
+    ├── examples/           # Library examples
+    │   └── basic_usage.rs  # Basic usage example
+    ├── tests/              # Library tests
+    │   ├── test_encoder.rs # Encoder tests
+    │   ├── test_decoder.rs # Decoder tests
+    │   ├── test_fourier.rs # Fourier tests
+    │   └── test_api.rs     # API tests
+    └── src/                # Source code with modular structure
+        ├── lib.rs          # Main library entry point
+        ├── encoder/        # Encoder module
+        │   └── mod.rs      # Encoder implementation
+        ├── decoder/        # Decoder module
+        │   └── mod.rs      # Decoder implementation
+        ├── fourier/        # Fourier module
+        │   └── mod.rs      # Fourier implementation
+        └── api/            # API module
+            └── mod.rs      # API implementation
 ```
 
 ## Architecture
 
 ### Workspace Structure
 
-This project uses Rust's workspace feature to organize related crates and language bindings. The root `Cargo.toml` defines the workspace and lists all member crates and bindings.
+This project uses Rust's workspace feature to organize a unified library and language bindings. The root `Cargo.toml` defines the workspace and lists the main library and binding members.
 
-### Crate Responsibilities
+### Library Structure
 
-#### `wavemark-encoder`
+#### `wavemark/` - Main Library
+- **Purpose**: Unified audio watermarking library with modular architecture
+- **Location**: `wavemark/`
+- **Structure**: Single library with organized modules in subdirectories
+
+#### Module Responsibilities
+
+##### `encoder/` Module
 - **Purpose**: Handles encoding of audio data into wavemark format
-- **Location**: `crates/encoder/`
+- **Location**: `wavemark/src/encoder/`
 - **Key Functions**: Audio data transformation, watermark embedding
 
-#### `wavemark-decoder`
+##### `decoder/` Module
 - **Purpose**: Handles decoding of wavemark data back to audio format
-- **Location**: `crates/decoder/`
+- **Location**: `wavemark/src/decoder/`
 - **Key Functions**: Watermark extraction, audio data reconstruction
 
-#### `wavemark-fourier`
+##### `fourier/` Module
 - **Purpose**: Provides Fourier transform functionality for signal processing
-- **Location**: `crates/fourier/`
+- **Location**: `wavemark/src/fourier/`
 - **Key Functions**: FFT operations, frequency domain analysis
 
-#### `wavemark-api`
-- **Purpose**: Main public API that orchestrates the other crates
-- **Location**: `crates/api/`
+##### `api/` Module
+- **Purpose**: Main public API that orchestrates the other modules
+- **Location**: `wavemark/src/api/`
 - **Key Functions**: High-level operations, user-facing interface
 
 ### Language Bindings
@@ -101,19 +103,23 @@ This project uses Rust's workspace feature to organize related crates and langua
 
 ### Building the Workspace
 
-To build all crates in the workspace:
+To build all components in the workspace:
 
 ```bash
 cargo build
 ```
 
-To build a specific crate:
+To build specific components:
 
 ```bash
-cargo build -p wavemark-encoder
-cargo build -p wavemark-decoder
-cargo build -p wavemark-fourier
-cargo build -p wavemark-api
+# Build main library
+cargo build -p wavemark
+
+# Build Python bindings
+cargo build -p wavemark-python
+
+# Build TypeScript bindings
+cargo build -p wavemark-typescript
 ```
 
 ### Running Tests
@@ -140,24 +146,33 @@ Dependencies can be added to individual crates by editing their respective `Carg
 some-crate = "1.0"
 ```
 
-### Cross-Crate Dependencies
+### Module Dependencies
 
-To use one crate from another within the workspace, add it as a dependency:
+The modules are organized within a single library, so they can reference each other directly:
+
+```rust
+// In wavemark/src/api/mod.rs
+use crate::encoder;
+use crate::decoder;
+use crate::fourier;
+```
+
+### Binding Dependencies
+
+Language bindings depend on the main library:
 
 ```toml
-# In crates/api/Cargo.toml
+# In bindings/python/Cargo.toml
 [dependencies]
-wavemark-encoder = { path = "../encoder" }
-wavemark-decoder = { path = "../decoder" }
-wavemark-fourier = { path = "../fourier" }
+wavemark = { workspace = true }
 ```
 
 ## Testing Strategy
 
-### Crate-Level Tests
+### Library Tests
 
-Each crate contains its own test directory with build verification tests:
-- `crates/*/tests/build_test.rs` - Verifies each crate builds and functions correctly
+The main library contains comprehensive tests:
+- `wavemark/tests/` - Integration tests for each module
 - Unit tests in `src/` files using the `#[cfg(test)]` attribute
 
 ### Test Scripts
@@ -172,8 +187,10 @@ The `scripts/` directory contains utility scripts for running tests:
 # Run all tests
 cargo test
 
-# Run tests for specific crate
-cargo test -p wavemark-encoder
+# Run tests for specific component
+cargo test -p wavemark
+cargo test -p wavemark-python
+cargo test -p wavemark-typescript
 
 # Use test scripts
 ./scripts/quick_test.sh

@@ -7,9 +7,13 @@ pub mod encoder;
 pub mod decoder;
 pub mod fourier;
 pub mod api;
+pub mod key;
+pub mod streaming;
 
 // Re-export main functionality
 pub use encoder::*;
 pub use decoder::*;
 pub use fourier::*;
 pub use api::*;
+pub use key::*;
+pub use streaming::*;

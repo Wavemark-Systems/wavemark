@@ -17,3 +17,17 @@ name = "basic_usage"
 path = "examples/basic_usage.rs"
 
 [dependencies]
+# Audio signal processing
+realfft = "3.4"
+
+# Audio file handling
+hound = "3.5"
+
+# Cryptography
+hkdf = "0.12"
+sha2 = "0.10"
+rand_chacha = "0.3"
+chacha20poly1305 = "0.10"
+
+# Error correction
+reed-solomon-erasure = "6.0"

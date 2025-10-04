@@ -20,13 +20,14 @@ cargo test
 
 ## Repository Structure
 
-This is a Rust workspace containing four specialized crates and language bindings:
+This is a Rust workspace containing a unified wavemark library and language bindings:
 
-### Core Crates
-- **`wavemark-encoder`** - Audio encoding and watermark embedding
-- **`wavemark-decoder`** - Audio decoding and watermark extraction  
-- **`wavemark-fourier`** - Fourier transform operations for signal processing
-- **`wavemark-api`** - Main public API that orchestrates all functionality
+### Core Library
+- **`wavemark/`** - Main audio watermarking library with modular structure:
+  - **`encoder/`** - Audio encoding and watermark embedding
+  - **`decoder/`** - Audio decoding and watermark extraction  
+  - **`fourier/`** - Fourier transform operations for signal processing
+  - **`api/`** - Main public API that orchestrates all functionality
 
 ### Language Bindings
 - **`bindings/python/`** - Python bindings using PyO3 (for AI developers)
