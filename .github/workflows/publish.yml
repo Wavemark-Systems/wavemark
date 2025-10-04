@@ -26,14 +26,21 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Install maturin
-      run: pip install maturin[patchelf]
+      run: |
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          pip install maturin[patchelf]
+        else
+          pip install maturin
+        fi
 
     - name: Build wheels
       run: |
         cd bindings/python
-        maturin build --release --out ../../dist
-      env:
-        MATURIN_PEP517_ARGS: --compatibility manylinux2014
+        if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+          maturin build --release --out ../../dist --compatibility manylinux2014
+        else
+          maturin build --release --out ../../dist
+        fi
 
     - name: Upload wheels
       uses: actions/upload-artifact@v4
