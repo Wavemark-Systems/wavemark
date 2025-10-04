@@ -1,14 +1,10 @@
 [workspace]
 members = [
-    "crates/encoder",
-    "crates/decoder", 
-    "crates/fourier",
-    "crates/api",
+    "wavemark",
+    "bindings/python",
+    "bindings/typescript",
 ]
 resolver = "2"
 
 [workspace.dependencies]
-wavemark-encoder = { path = "crates/encoder" }
-wavemark-decoder = { path = "crates/decoder" }
-wavemark-fourier = { path = "crates/fourier" }
-wavemark-api = { path = "crates/api" }
+wavemark = { path = "wavemark" }

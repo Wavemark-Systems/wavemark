@@ -1,0 +1,9 @@
+[build]
+target = "wasm32-unknown-unknown"  # Default for WebAssembly
+
+[target.wasm32-unknown-unknown]
+linker = "wasm-ld"
+
+# TypeScript/WebAssembly binding specific configuration
+[env]
+RUSTFLAGS = "-C target-feature=+bulk-memory,+mutable-globals"

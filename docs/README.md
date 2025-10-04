@@ -17,6 +17,17 @@ wavemark/
 │   ├── run_all_tests.sh    # Comprehensive test runner
 │   ├── quick_test.sh       # Quick test runner
 │   └── README.md           # Scripts documentation
+├── bindings/               # Language bindings
+│   ├── python/             # Python bindings (PyO3)
+│   │   ├── src/            # Rust source for Python bindings
+│   │   ├── tests/          # Python tests
+│   │   ├── examples/       # Python examples
+│   │   └── .cargo/         # Cargo configuration
+│   └── typescript/         # TypeScript/WebAssembly bindings
+│       ├── src/            # Rust source for WASM bindings
+│       ├── tests/          # TypeScript tests
+│       ├── examples/       # TypeScript examples
+│       └── .cargo/         # Cargo configuration
 └── crates/                 # Individual library crates
     ├── encoder/            # Audio encoding functionality
     │   ├── Cargo.toml
@@ -48,7 +59,7 @@ wavemark/
 
 ### Workspace Structure
 
-This project uses Rust's workspace feature to organize related crates. The root `Cargo.toml` defines the workspace and lists all member crates.
+This project uses Rust's workspace feature to organize related crates and language bindings. The root `Cargo.toml` defines the workspace and lists all member crates and bindings.
 
 ### Crate Responsibilities
 
@@ -71,6 +82,20 @@ This project uses Rust's workspace feature to organize related crates. The root 
 - **Purpose**: Main public API that orchestrates the other crates
 - **Location**: `crates/api/`
 - **Key Functions**: High-level operations, user-facing interface
+
+### Language Bindings
+
+#### Python Bindings (`bindings/python/`)
+- **Technology**: PyO3 for native Python integration
+- **Target Audience**: AI developers, researchers, data scientists
+- **Features**: NumPy integration, idiomatic Python API, PyPI distribution
+- **Usage**: `pip install wavemark`
+
+#### TypeScript/WebAssembly Bindings (`bindings/typescript/`)
+- **Technology**: WebAssembly with wasm-bindgen
+- **Target Audience**: Web developers, browser-based applications
+- **Features**: Web Audio API integration, near-native performance, NPM distribution
+- **Usage**: `npm install wavemark-typescript`
 
 ## Development
 

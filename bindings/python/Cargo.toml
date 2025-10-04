@@ -1,0 +1,20 @@
+[package]
+name = "wavemark-python"
+version = "0.1.0"
+edition = "2021"
+description = "Python bindings for Wavemark audio watermarking library"
+license = "MIT"
+repository = "https://github.com/your-org/wavemark"
+keywords = ["audio", "watermarking", "ai", "voice", "python"]
+categories = ["audio", "cryptography", "multimedia"]
+
+[lib]
+name = "wavemark_python"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.21", features = ["extension-module", "abi3-py312"] }
+wavemark = { workspace = true }
+
+[build-dependencies]
+pyo3-build-config = "0.21"
