@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "crates/encoder",
+    "crates/decoder", 
+    "crates/fourier",
+    "crates/api",
+]
+resolver = "2"
