@@ -9,7 +9,7 @@ keywords = ["audio", "watermarking", "ai", "voice", "python"]
 categories = ["audio", "cryptography", "multimedia"]
 
 [lib]
-name = "wavemark_python"
+name = "wavemark"
 crate-type = ["cdylib"]
 
 [dependencies]

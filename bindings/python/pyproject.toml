@@ -5,14 +5,14 @@ build-backend = "maturin"
 [project]
 name = "wavemark"
 version = "0.1.0"
-description = "Python bindings for Wavemark audio watermarking library"
+description = "Audio watermarking library for AI voice generators"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
     {name = "Wavemark Contributors"},
 ]
-keywords = ["audio", "watermarking", "ai", "voice", "python"]
+keywords = ["audio", "watermarking", "ai", "voice", "python", "rust"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -24,8 +24,10 @@ classifiers = [
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
+    "Programming Language :: Rust",
     "Topic :: Multimedia :: Sound/Audio",
     "Topic :: Scientific/Engineering",
+    "Topic :: Security :: Cryptography",
 ]
 
 dependencies = [
@@ -53,4 +55,4 @@ Documentation = "https://wavemark.readthedocs.io"
 
 [tool.maturin]
 python-source = "python"
-module-name = "wavemark_python"
+module-name = "wavemark"
