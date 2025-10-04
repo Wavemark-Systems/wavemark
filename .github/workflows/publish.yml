@@ -126,6 +126,8 @@ jobs:
         find dist/ -name "*.whl" -type f
 
     - name: Publish to PyPI
-      run: maturin upload --skip-existing dist/*
+      run: |
+        # Find all wheel files and upload them
+        find dist/ -name "*.whl" -type f -exec maturin upload --skip-existing {} \;
       env:
         MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
