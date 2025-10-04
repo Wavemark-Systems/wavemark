@@ -30,7 +30,7 @@ jobs:
     - name: Build manylinux wheels
       run: |
         cd bindings/python
-        maturin build --release --out ../../dist --compatibility manylinux_2_17
+        docker run --rm -v $(pwd):/io -v $(pwd)/../../dist:/dist ghcr.io/pyo3/maturin:main build --release --out /dist --compatibility manylinux2014
 
     - name: Upload wheels
       uses: actions/upload-artifact@v4
