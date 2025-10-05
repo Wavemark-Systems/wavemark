@@ -7,7 +7,7 @@ find advice on handling failures and preparing for future format versions.
 
 ## Overview
 
-`wavemark::format` exposes a high-level [`FormatBuilder`](../wavemark/src/format/mod.rs)
+`wavemark::format` exposes a high-level [`FormatBuilder`](../../../wavemark/src/format/mod.rs)
 that composes three subsystems:
 
 - **Schema & data model**: `format::payload` defines well-known metadata keys,
@@ -34,7 +34,9 @@ builder
     .payload_builder()
     .account_id("acct_demo")?
     .issued_at(wavemark::format::payload::MetadataTimestamp::now())?
-    .expires_at(wavemark::format::payload::MetadataTimestamp::from_unix_seconds(1_700_000_000)?);
+    .expires_at(
+        wavemark::format::payload::MetadataTimestamp::from_unix_seconds(1_700_000_000)?,
+    );
 
 let output = builder.build()?;
 assert!(output.frame.account_id().is_some());
@@ -48,7 +50,7 @@ does nothing. Callers may override the value explicitly as shown above.
 
 Custom metadata keys support lowercase ASCII characters, digits, `.` and `_`.
 Builder helpers convert basic Rust types into the appropriate
-[`MetadataValue`](../wavemark/src/format/payload.rs).
+[`MetadataValue`](../../../wavemark/src/format/payload.rs).
 
 ```rust
 use wavemark::format::FormatBuilder;
@@ -63,7 +65,13 @@ builder
     .bool_field("content.preview", true)?;
 
 let output = builder.build()?;
-assert_eq!(output.frame.get(&MetadataKey::custom("content.preview")?), Some(&wavemark::format::payload::MetadataValue::Bool(true)));
+assert_eq!(
+    output
+        .frame
+        .get(&MetadataKey::custom("content.preview")?)
+        .cloned(),
+    Some(wavemark::format::payload::MetadataValue::Bool(true)),
+);
 ```
 
 If you need to construct fields elsewhere, combine `MetadataKey` and
@@ -74,29 +82,41 @@ If you need to construct fields elsewhere, combine `MetadataKey` and
 
 `EncryptionMode` determines how payload bytes are wrapped. By default, the
 builder emits plaintext payloads. To enable encrypted-hash envelopes, supply an
-[`EncryptedHashConfig`](../wavemark/src/format/encryption.rs) containing your
-strategy implementation.
+[`EncryptedHashConfig`](../../../wavemark/src/format/encryption.rs) containing
+your strategy implementation.
 
 ```rust
 use std::sync::Arc;
-use wavemark::format::encryption::{EncryptionContext, EncryptionMode, EncryptedHashConfig, EncryptedHashStrategy};
+use wavemark::format::encryption::{
+    EncryptionContext, EncryptionMode, EncryptedHashConfig, EncryptedHashStrategy,
+};
 use wavemark::format::FormatBuilder;
 
 struct MyStrategy;
 
 impl wavemark::format::encryption::PayloadEncryption for MyStrategy {
-    // implement `seal`/`open` using your crypto primitives
-    # fn seal(&self, payload: &[u8], _ctx: &EncryptionContext) -> Result<wavemark::format::encryption::EncryptionArtifacts, wavemark::format::encryption::EncryptionError> {
+    # fn seal(
+    #     &self,
+    #     payload: &[u8],
+    #     _ctx: &EncryptionContext,
+    # ) -> Result<wavemark::format::encryption::EncryptionArtifacts, wavemark::format::encryption::EncryptionError> {
     #     Ok(wavemark::format::encryption::EncryptionArtifacts::passthrough(payload.to_vec()))
     # }
-    # fn open(&self, sealed: &[u8], _artifacts: &wavemark::format::encryption::EncryptionArtifacts, _ctx: &EncryptionContext) -> Result<Vec<u8>, wavemark::format::encryption::EncryptionError> {
+    # fn open(
+    #     &self,
+    #     sealed: &[u8],
+    #     _artifacts: &wavemark::format::encryption::EncryptionArtifacts,
+    #     _ctx: &EncryptionContext,
+    # ) -> Result<Vec<u8>, wavemark::format::encryption::EncryptionError> {
     #     Ok(sealed.to_vec())
     # }
     # fn scheme_name(&self) -> &'static str { "my-strategy" }
 }
 
 impl EncryptedHashStrategy for MyStrategy {
-    fn algorithm_id(&self) -> &'static str { "my-strategy" }
+    fn algorithm_id(&self) -> &'static str {
+        "my-strategy"
+    }
 }
 
 let strategy = Arc::new(MyStrategy);
@@ -170,11 +190,11 @@ Example handling pattern:
 match FormatBuilder::new().build() {
     Ok(output) => embed_bytes(output.bytes),
     Err(err) => match err {
-        CodecError::Payload(payload_err) => {
+        wavemark::format::codec::CodecError::Payload(payload_err) => {
             log::warn!("bad metadata: {payload_err}");
             return Err(UserFacingError::InvalidMetadata);
         }
-        CodecError::Encryption(enc_err) => {
+        wavemark::format::codec::CodecError::Encryption(enc_err) => {
             log::error!("encryption failed: {enc_err}");
             retry_with_fallback_config();
         }
@@ -210,12 +230,12 @@ utilities if the on-disk format changes.
 
 ## Additional Resources
 
-- [`src/format/payload.rs`](../wavemark/src/format/payload.rs): Full metadata
+- [`src/format/payload.rs`](../../../wavemark/src/format/payload.rs): Metadata
   data model, including constraints and well-known keys.
-- [`src/format/encryption.rs`](../wavemark/src/format/encryption.rs): Extension
-  points for custom encrypted-hash strategies.
-- [`src/format/codec.rs`](../wavemark/src/format/codec.rs): Byte layout and
-  serialization internals.
-- [`tests/format_payload.rs`](../wavemark/tests/format_payload.rs): Working
-  examples of builder usage, encryption mocks, and error assertions.
+- [`src/format/encryption.rs`](../../../wavemark/src/format/encryption.rs):
+  Extension points for custom encrypted-hash strategies.
+- [`src/format/codec.rs`](../../../wavemark/src/format/codec.rs): Byte layout
+  and serialization internals.
+- [`tests/format_payload.rs`](../../../wavemark/tests/format_payload.rs):
+  Examples of builder usage, encryption mocks, and error assertions.
 
