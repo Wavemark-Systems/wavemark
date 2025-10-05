@@ -1,6 +1,6 @@
 # Wavemark Python Bindings
 
-This directory contains Python bindings for the Wavemark audio watermarking library, following the same pattern as the [tokenizers](https://github.com/huggingface/tokenizers) library.
+This directory contains Python bindings for the Wavemark audio watermarking library.
 
 ## Overview
 

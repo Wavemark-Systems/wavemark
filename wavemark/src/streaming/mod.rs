@@ -1,7 +1,3 @@
-//! Wavemark Streaming
-//! 
-//! This module provides audio streaming functionality.
+//! Streaming integration placeholders.
 
-pub fn stream_audio() {
-    // TODO: Implement streaming logic
-}
+pub mod session;

@@ -1,7 +1,3 @@
-//! Wavemark API
-//! 
-//! This module provides the main API for the wavemark library.
+//! High-level API placeholders.
 
-pub fn process() {
-    // TODO: Implement main API logic
-}
+pub mod builder;

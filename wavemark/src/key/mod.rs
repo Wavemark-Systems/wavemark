@@ -1,7 +1,3 @@
-//! Wavemark Key Management
-//! 
-//! This module provides cryptographic key management functionality.
+//! Key management placeholders.
 
-pub fn generate_key() {
-    // TODO: Implement key generation logic
-}
+pub mod derivation;
