@@ -1,5 +1,5 @@
 //! Build verification test for wavemark fourier module
-//! 
+//!
 //! This test ensures the fourier module builds and its basic functionality works.
 
 use wavemark::fourier;

@@ -1,5 +1,5 @@
 //! Build verification test for wavemark api module
-//! 
+//!
 //! This test ensures the api module builds and its basic functionality works.
 
 use wavemark::api;

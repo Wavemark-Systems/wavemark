@@ -1,5 +1,5 @@
 //! Build verification test for wavemark encoder module
-//! 
+//!
 //! This test ensures the encoder module builds and its basic functionality works.
 
 use wavemark::encoder;
